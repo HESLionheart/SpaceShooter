@@ -1,7 +1,9 @@
 ﻿using Assets.Scripts;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
@@ -26,11 +28,19 @@ public class GameManager : MonoBehaviour {
             instance = this;
         else if (instance != this)
             Destroy(gameObject);
-        DontDestroyOnLoad(gameObject);
-        image = canvas.GetComponentInChildren<RawImage>();
         settings = Settings.LoadSettings(filename);
+        InitGame();
+    }
+
+    public void InitGame()
+    {
+        if (!File.Exists(Application.persistentDataPath + "/" + Settings.vic))
+            WebDownloader.instance.StartCoroutine(WebDownloader.instance.UpdateIMG(Settings.vic,settings.vic_url));
+        if (!File.Exists(Application.persistentDataPath + "/" + Settings.def))
+            WebDownloader.instance.StartCoroutine(WebDownloader.instance.UpdateIMG(Settings.def, settings.def_url));
+        image = canvas.GetComponentInChildren<RawImage>();
         enemies = new List<GameObject>();
-        SpawnEnemies(settings.high_score+1);
+        SpawnEnemies(settings.high_score + 1);
     }
 
     void SpawnEnemies(int count)
