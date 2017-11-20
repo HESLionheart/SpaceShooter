@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using UnityEngine;
 
 namespace Assets.Scripts
@@ -11,6 +13,8 @@ namespace Assets.Scripts
         public int high_score;
         public string vic_url;
         public string def_url;
+
+        public static string vic = "vic.png", def = "def.png";
 
         public Settings()
         {
@@ -38,9 +42,16 @@ namespace Assets.Scripts
             return JsonUtility.FromJson<Settings>(json);
         }
 
-        public static void SaveSettings(string filename,Settings settings)
+        public static void SaveSettings(string filename, Settings settings)
         {
-            File.WriteAllText(Application.persistentDataPath + "/" + filename,JsonUtility.ToJson(settings));
+            Settings old = LoadSettings(filename);
+            if (settings.high_score < -1)
+                settings.high_score = old.high_score;
+            if (String.IsNullOrEmpty(settings.vic_url))
+                settings.vic_url = old.vic_url;
+            if (String.IsNullOrEmpty(settings.def_url))
+                settings.def_url = old.def_url;
+            File.WriteAllText(Application.persistentDataPath + "/" + filename, JsonUtility.ToJson(settings));
         }
     }
 }

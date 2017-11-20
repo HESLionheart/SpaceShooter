@@ -126,6 +126,6 @@ public class Enemy : MonoBehaviour
         Vector3 offset = transform.rotation * new Vector3(0, fire_offset, 0);
         GameObject go = Instantiate(laser,this.transform.position,this.transform.rotation);
         go.GetComponent<SpriteRenderer>().sprite = laser_sprite;
-        go.layer = gameObject.layer;
+        go.layer = LayerMask.NameToLayer("enemy_laser");
     } 
 }

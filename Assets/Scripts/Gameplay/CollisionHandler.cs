@@ -9,11 +9,14 @@ public class CollisionHandler : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         health--;
+        Debug.Log(gameObject.name+":"+health);
     }
 
     private void LateUpdate()
     {
         if (health <= 0)
+        {
             GameManager.instance.Kill(gameObject);
+        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour {
 
@@ -13,6 +14,9 @@ public class GameManager : MonoBehaviour {
     GameObject enemy;
     [SerializeField]
     float radius;
+    [SerializeField]
+    Canvas canvas;
+    RawImage image; 
     int score;
     List<GameObject> enemies;
 
@@ -23,6 +27,7 @@ public class GameManager : MonoBehaviour {
         else if (instance != this)
             Destroy(gameObject);
         DontDestroyOnLoad(gameObject);
+        image = canvas.GetComponentInChildren<RawImage>();
         settings = Settings.LoadSettings(filename);
         enemies = new List<GameObject>();
         SpawnEnemies(settings.high_score+1);
@@ -41,19 +46,33 @@ public class GameManager : MonoBehaviour {
     public void Kill(GameObject go)
     {
         if (go.layer == LayerMask.NameToLayer("player"))
-            GameOver(false);
-        else if(go.layer == LayerMask.NameToLayer("enemy"))
+            StartCoroutine(GameOver(false));
+        else if (go.layer == LayerMask.NameToLayer("enemy"))
         {
             enemies.Remove(go);
             Destroy(go);
             if (enemies.Count <= 0)
-                GameOver(true);
+                StartCoroutine(GameOver(true));
         }
+        else
+            Destroy(go);
 
     }
 
-    public void GameOver(bool win)
+    public IEnumerator GameOver(bool win)
     {
-
+        canvas.gameObject.SetActive(true);
+        string path = "file://" + Application.persistentDataPath + "/";
+        if (win)
+        {
+            path += Settings.vic;
+            settings.high_score++;
+            Settings.SaveSettings(filename,settings);
+        }
+        else
+            path += Settings.def;
+        WWW www = new WWW(path);
+        yield return www;
+        image.texture = www.texture;
     }
 }

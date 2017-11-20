@@ -28,7 +28,6 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-
     }
 
 
@@ -85,7 +84,7 @@ public class Player : MonoBehaviour
             Vector3 offset = transform.rotation * new Vector3(0,fire_offset,0);
             GameObject go=Instantiate(laser,transform.position+offset,transform.rotation);
             go.GetComponent<SpriteRenderer>().sprite = laser_sprite;
-            go.layer = gameObject.layer;
+            go.layer = LayerMask.NameToLayer("player_laser");
         }
         else
             cooldown -= Time.deltaTime;
